@@ -14,11 +14,14 @@ export default class SquadMap {
     console.log("initializing SquadMap with:", mapDataObj);
     this._mapData = mapDataObj;
     this.hasHeightmap = !!mapDataObj.heightmap;
+    this.hasPhotomap = !!mapDataObj.photomap;
     this.hasLocations = !!mapDataObj.locations;
     this.bounds = new LatLngBounds([0, 0], this._mapData.bounds);
     this._heightmapHolder = undefined;
     this._heightmapOverlay = undefined;
     this._heightmapTileLayer = undefined;
+    this._photomapOverlay = undefined;
+    this._photomapTileLayer = undefined;
     this._locations = undefined;
     this._mapTileLayer = undefined;
 
@@ -122,5 +125,39 @@ export default class SquadMap {
     }
 
     return this._heightmapHolder;
+  }
+
+  /**
+   * Returns photomapmap of the map matching given name as ImageOverlay.
+   * @returns {ImageOverlay} the generated photomap as ImageOverlay
+   */
+  getPhotomapOverlay() {
+    if (!this.hasPhotomap) { throw new Error(`${this._mapData.name} has no photomap!`); }
+
+    if (!this._photomapOverlay) {
+      this._photomapOverlay = new ImageOverlay(this._mapData.photomap.url, this.bounds, { opacity: 1 });
+    }
+
+    return this._photomapOverlay;
+  }
+
+  /**
+   * Returns photomap of the map matching given name as TileLayer.
+   * @returns {TileLayer} the generated photomap as TileLayer
+   */
+  getPhotomapTileLayer() {
+    if (!this.hasPhotomap) { throw new Error(`${this._mapData.name} has no photomap!`); }
+
+    if (!this._photomapTileLayer) {
+      this._photomapTileLayer = new NoGapTileLayer(this._mapData.photomap.tile, {
+        minNativeZoom: 0,
+        maxNativeZoom: 4,
+        // zoomOffset: -3,
+        attribution: "Map &copy; <a href='http://joinsquad.com/'>Offworld Inc.</a>",
+        bounds: this.bounds,
+      });
+    }
+
+    return this._photomapTileLayer;
   }
 }

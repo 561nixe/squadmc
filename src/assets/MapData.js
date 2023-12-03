@@ -19,6 +19,10 @@ export default class MapData {
           map.heightmap.url = baseUrl + map.heightmap.url;
           map.heightmap.tile = baseUrl + map.heightmap.tile;
         }
+        if (map.photomap) {
+          map.photomap.url = baseUrl + map.photomap.url;
+          map.photomap.tile = baseUrl + map.photomap.tile;
+        }
       });
     });
   }

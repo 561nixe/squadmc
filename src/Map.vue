@@ -658,6 +658,20 @@
           <v-list-tile>
             <v-list-tile-action>
               <v-switch
+                v-model="showPhotomap"
+                :disabled="!squadMap || !squadMap.hasPhotomap"
+              />
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>Show Photomap</v-list-tile-title>
+            </v-list-tile-content>
+            <v-list-tile-avatar>
+              <v-icon>terrain</v-icon>
+            </v-list-tile-avatar>
+          </v-list-tile>
+          <v-list-tile>
+            <v-list-tile-action>
+              <v-switch
                 v-model="showGrid"
               />
             </v-list-tile-action>
@@ -948,6 +962,7 @@ export default {
       maps: this.mapData.getMapNames(), // map names for top selector
       grid: new SquadGrid(), // keypad grid
       locationLayer: new LocationLayer(), // locationlayer
+      showPhotomap: this.fromStorage("showPhotomap", "false") === "true",
       showGrid: this.fromStorage("showGrid", "true") === "true",
       showHeightmap: this.fromStorage("showHeightmap", "false") === "true",
       showLocations: this.fromStorage("showLocations", "false") === "true",
@@ -1123,6 +1138,20 @@ export default {
         this.loading = false;
       });
       if (this.showHeightmap) {
+        layer = hLayer;
+      }
+    }
+    if (squadMap.hasPhotomap) {
+      const hLayer = squadMap.getPhotomapTileLayer();
+
+      // we set loading callbacks even if its not to be shown yet
+      hLayer.on("loading", () => {
+        this.loading = true;
+      });
+      hLayer.on("load", () => {
+        this.loading = false;
+      });
+      if (this.showPhotomap) {
         layer = hLayer;
       }
     }
@@ -1699,6 +1728,23 @@ export default {
         }
       }, 250);
     },
+    showPhotomapOnLoad() {
+      console.log("showPhotomapOnLoad");
+      const photomap = this.squadMap.getPhotomapTileLayer();
+      const mapLayer = this.squadMap.getMapTileLayer();
+      // make sure this function is not being called multiple times
+      photomap.off("load", this.showPhotomapOnLoad);
+      mapLayer.off("load", this.showPhotomapOnLoad);
+      setTimeout(() => {
+        console.log("showPhotomapOnLoad timeout");
+        // safety check if it should still be removed
+        if (this.showPhotomap && this.map.hasLayer(mapLayer)) {
+          this.map.removeLayer(mapLayer);
+        } else if (!this.showPhotomap && this.map.hasLayer(photomap)) {
+          this.map.removeLayer(photomap);
+        }
+      }, 250);
+    },
     onDragStartListener() {
       this.dragging = true;
     },
@@ -1870,6 +1916,25 @@ export default {
         }
       }
       this.toStorage("showHeightmap", b);
+    },
+    showPhotomap(b) {
+      console.log("showPhotomap:", b);
+      if (b && this.squadMap.hasPhotomap) {
+        console.log("adding photomap");
+        const photomap = this.squadMap.getPhotomapTileLayer();
+        if (!this.map.hasLayer(photomap)) {
+          this.map.addLayer(photomap);
+          photomap.on("load", this.showPhotomapOnLoad);
+        }
+      } else {
+        console.log("removing photomap");
+        const mapLayer = this.squadMap.getMapTileLayer();
+        if (!this.map.hasLayer(mapLayer)) {
+          this.map.addLayer(mapLayer);
+          mapLayer.on("load", this.showPhotomapOnLoad);
+        }
+      }
+      this.toStorage("showPhotomap", b);
     },
     /**
      * Toggles locations visibility and saves state to localStorage
