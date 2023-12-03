@@ -41,19 +41,19 @@ export const SQUAD_VELOCITY = 109.890938;
 export const SQUAD_MAX_DISTANCE = 1232;
 
 export const PS_8CM_NAME = "GER 8cm";
-export const PS_8CM_VELOCITY = 119.93;
+export const PS_8CM_VELOCITY = 120.00;
 export const PS_8CM_MAX_DISTANCE = 1467;
 
 export const PS_3INCH_NAME = "BRIT 3″";
-export const PS_3INCH_VELOCITY = 119.93;
+export const PS_3INCH_VELOCITY = 120.0;
 export const PS_3INCH_MAX_DISTANCE = 1467;
 
 export const PS_4INCH_NAME = "BRIT 4″";
-export const PS_4INCH_VELOCITY = 166.94;
+export const PS_4INCH_VELOCITY = 167.00;
 export const PS_4INCH_MAX_DISTANCE = 2818;
 
 export const PS_6CM_NAME = "US 6cm";
-export const PS_6CM_VELOCITY = 119.93;
+export const PS_6CM_VELOCITY = 120.0;
 export const PS_6CM_MAX_DISTANCE = 1467;
 
 export const GRAVITY = 9.8;
