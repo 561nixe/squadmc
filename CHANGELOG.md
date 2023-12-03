@@ -1,5 +1,14 @@
 # Change Log
 
+<a name="2.15.0"></a>
+# [2.15.0](https://github.com/Endebert/squadmc/compare/v2.12.3...v2.14.0) (2023-12-03)
+
+* Location names are not displayed if empty
+* Photomaps are now overlays rather than separate maps
+![Photomaps settings](/img/photomaps_settings.png "Photomaps settings")
+
+
+
 <a name="2.14.0"></a>
 # [2.14.0](https://github.com/Endebert/squadmc/compare/v2.12.3...v2.14.0) (2020-12-27)
 
