@@ -666,7 +666,7 @@
               <v-list-tile-title>Show Photomap</v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-avatar>
-              <v-icon>terrain</v-icon>
+              <v-icon>image</v-icon>
             </v-list-tile-avatar>
           </v-list-tile>
           <v-list-tile>
@@ -1680,7 +1680,7 @@ export default {
      * Open GitHub page of this project in a new tab
      */
     openGitHub() {
-      window.open("https://github.com/Endebert/squadmc", "_blank");
+      window.open("https://github.com/michalletavka/squadmc", "_blank");
     },
 
     clearPrimaryLine() {

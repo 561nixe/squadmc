@@ -12,7 +12,7 @@ const postScriptum = false;
 const mapData = new MapData();
 
 // adapt for local testing or when forking the project
-let baseUrl = "https://maps.squadmc.ende.pro";
+let baseUrl = "https://psmaps.michalletavka.cz";
 if (postScriptum) { baseUrl += "/ps"; }
 
 export default {
