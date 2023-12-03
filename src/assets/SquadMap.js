@@ -102,7 +102,10 @@ export default class SquadMap {
           clickable: false, // legacy support
         });
         // bind name label to marker
-        marker.bindTooltip(name, { permanent: true, direction: "top", offset: [0, -8] });
+        if (name)
+        {
+          marker.bindTooltip(name, { permanent: true, direction: "top", offset: [0, -8] });
+        }
 
         this._locations.push(marker);
       });
