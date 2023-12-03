@@ -4,9 +4,9 @@
   "version": "2.14.0",
   "private": false,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --modern",
-    "lint": "vue-cli-service lint",
+    "serve": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --modern",
+    "lint": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service lint",
     "release": "standard-version",
     "calc": "node calcMortarSettings.js"
   },
