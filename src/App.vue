@@ -8,12 +8,12 @@ import MapData from "./assets/MapData";
 
 // variable that determines PostScriptum mode
 // based on this, mapData baseURL will be modified and condition for Map component set
-const postScriptum = false;
+const postScriptum = true;
 const mapData = new MapData();
 
 // adapt for local testing or when forking the project
 let baseUrl = "https://psmaps.michalletavka.cz";
-if (postScriptum) { baseUrl += "/ps"; }
+if (postScriptum) { baseUrl += "/"; }
 
 export default {
   name: "App",
