@@ -1902,6 +1902,7 @@ export default {
       console.log("showHeightmap:", b);
       if (b && this.squadMap.hasHeightmap) {
         console.log("adding heightmap");
+        this.showPhotomap = false;
         const heightmap = this.squadMap.getHeightmapTileLayer();
         if (!this.map.hasLayer(heightmap)) {
           this.map.addLayer(heightmap);
@@ -1921,6 +1922,7 @@ export default {
       console.log("showPhotomap:", b);
       if (b && this.squadMap.hasPhotomap) {
         console.log("adding photomap");
+        this.showHeightmap = false;
         const photomap = this.squadMap.getPhotomapTileLayer();
         if (!this.map.hasLayer(photomap)) {
           this.map.addLayer(photomap);
