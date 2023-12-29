@@ -40,21 +40,72 @@ export const SQUAD_NAME = "SQUAD";
 export const SQUAD_VELOCITY = 109.890938;
 export const SQUAD_MAX_DISTANCE = 1232;
 
-export const PS_8CM_NAME = "GER 8cm";
-export const PS_8CM_VELOCITY = 120.00;
-export const PS_8CM_MAX_DISTANCE = 1467;
-
-export const PS_3INCH_NAME = "BRIT 3″";
-export const PS_3INCH_VELOCITY = 120.0;
-export const PS_3INCH_MAX_DISTANCE = 1467;
-
-export const PS_4INCH_NAME = "BRIT 4″";
-export const PS_4INCH_VELOCITY = 167.00;
-export const PS_4INCH_MAX_DISTANCE = 2818;
-
-export const PS_6CM_NAME = "US 6cm";
-export const PS_6CM_VELOCITY = 120.0;
-export const PS_6CM_MAX_DISTANCE = 1467;
+export const PS_MORTAR_CONFIG = [
+  {
+    name: "GER 8cm",
+    velocity: 120.0,
+    maxDistance: 1467,
+    minDistance: 100,
+    rangeTable: null,
+  },
+  {
+    name: "BRIT 3″",
+    velocity: 120.0,
+    maxDistance: 1467,
+    minDistance: 100,
+    rangeTable: null,
+  },
+  {
+    name: "BRIT 4″",
+    velocity: 167.0,
+    maxDistance: 2818,
+    minDistance: 200,
+    rangeTable: null,
+  },
+  {
+    name: "US 6cm",
+    velocity: 120.0,
+    maxDistance: 1467,
+    minDistance: 100,
+    rangeTable: null,
+  },
+  {
+    name: "SDFKZ 251 8cm",
+    velocity: null,
+    maxDistance: 1400,
+    minDistance: 350,
+    rangeTable: [
+      [350, 660],
+      [400, 650],
+      [500, 600],
+      [600, 550],
+      [700, 500],
+      [800, 450],
+      [900, 400],
+      [1000, 320],
+      [1100, 270],
+      [1200, 200],
+      [1300, 100],
+      [1400, 0]
+    ],
+  },
+  {
+    name: "Bren  carrier 2″",
+    velocity: null,
+    maxDistance: 450,
+    minDistance: 100,
+    rangeTable: [
+      [100, 665],
+      [150, 605],
+      [200, 545],
+      [250, 490],
+      [300, 435],
+      [350, 320],
+      [400, 200],
+      [450, 0]
+    ],
+  },
+];
 
 export const GRAVITY = 9.8;
 export const MIL_TO_DEG_FACTOR = 360.0 / 6283.1853;

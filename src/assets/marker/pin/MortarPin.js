@@ -7,9 +7,10 @@ import { MIN_DISTANCE, SQUAD_MAX_DISTANCE } from "../../Vars";
  * @extends PinHolder
  */
 export default class MortarPin extends PinHolder {
-  constructor(map, pinUrl, size, draggable = true, maxDistance = SQUAD_MAX_DISTANCE) {
+  constructor(map, pinUrl, size, draggable = true, maxDistance = SQUAD_MAX_DISTANCE, minDistance = MIN_DISTANCE) {
     super(map, pinUrl, size, draggable);
     this.maxDistance = maxDistance;
+    this.minDistance = minDistance;
   }
 
   /**
@@ -38,6 +39,19 @@ export default class MortarPin extends PinHolder {
   }
 
   /**
+   * Set the min distance for this pin. Used to draw min range circle on mortar markers
+   * @param {Number} minDistance - min distance value for this pin
+   */
+  setMinDistance(minDistance) {
+    console.log("setMinDistance", minDistance);
+    this.minDistance = minDistance;
+    if (this.minRangeCircle) {
+      console.log("minRangeCircle", this.minRangeCircle);
+      this.minRangeCircle.setRadius(minDistance);
+    }
+  }
+
+  /**
    * Creates min and max range circles for mortar marker
    */
   _createAttachments() {
@@ -45,7 +59,7 @@ export default class MortarPin extends PinHolder {
 
     this.minRangeCircle = new Circle(this.pos, {
       draggable: "false",
-      radius: MIN_DISTANCE,
+      radius: this.minDistance,
       color: this.color,
       fillOpacity: 0,
       dashArray: "5, 5",

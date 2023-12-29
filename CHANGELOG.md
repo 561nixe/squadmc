@@ -1,5 +1,10 @@
 # Change Log
 
+<a name="2.15.2"></a>
+# 2.15.2 (2023-12-29)
+* Added mortar vehicles
+* Added minimal range visualisation
+
 <a name="2.15.1"></a>
 # 2.15.1 (2023-12-16)
 * Fixed typo in name

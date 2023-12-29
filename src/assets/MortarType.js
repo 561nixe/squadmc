@@ -5,9 +5,11 @@ export default class MortarType {
    * @param {number} velocity
    * @param {number} maxDistance
    */
-  constructor(name, velocity, maxDistance) {
+  constructor(name, velocity, maxDistance, minDistance = 50, rangeTable = null) {
     this.name = name;
     this.velocity = velocity;
     this.maxDistance = maxDistance;
+    this.minDistance = minDistance;
+    this.rangeTable = rangeTable;
   }
 }

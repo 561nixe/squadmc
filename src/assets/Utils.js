@@ -7,15 +7,7 @@ import {
   SQUAD_VELOCITY,
   SQUAD_NAME,
   SQUAD_MAX_DISTANCE,
-  PS_8CM_NAME,
-  PS_8CM_VELOCITY,
-  PS_8CM_MAX_DISTANCE,
-  PS_4INCH_MAX_DISTANCE,
-  PS_4INCH_VELOCITY,
-  PS_4INCH_NAME,
-  PS_3INCH_MAX_DISTANCE,
-  PS_3INCH_VELOCITY, PS_3INCH_NAME,
-  PS_6CM_NAME, PS_6CM_VELOCITY, PS_6CM_MAX_DISTANCE,
+  PS_MORTAR_CONFIG,
 } from "./Vars";
 import MortarType from "./MortarType";
 
@@ -218,8 +210,8 @@ export function getNatoElevation(x, y = 0, v = SQUAD_VELOCITY, g = GRAVITY) {
  * Calculates the angle the mortar needs to be set,
  * in order to hit the target at the desired distance and vertical delta.
  *
- * Function taken from https://en.wikipedia.org/wiki/Projectile_motion
- *
+` * Function taken from https://en.wikipedia.org/wiki/Projectile_motion
+` *
  * @param {number} x - distance between mortar and target
  * @param {number} [y] - vertical delta between mortar and target
  * @param {number} [v] - initial mortar projectile velocity
@@ -233,6 +225,45 @@ export function getElevation(x, y = 0, v = SQUAD_VELOCITY, g = GRAVITY) {
   // no need to calculate, angle is always below 45°/800mil
 
   return radToMil(a1);
+}
+
+
+/**
+ * Calculates elevations based on range table.
+ *
+ * @param {number} x - distance between mortar and target
+ * @returns {number || NaN} mil if target in range, NaN otherwise
+ */
+export function getElevationFromTable(range, rangeTable) {
+  // If range is outside of range table, return NaN
+  if (range < rangeTable[0][0]
+    || range > rangeTable[rangeTable.length - 1][0])
+  {
+    return NaN;
+  }
+
+  // Find the closest range in the table
+  let closestRange = 0;
+  let closestRangeIndex = 0;
+  let closestRangeDiff = 999999;
+  for (let i = 0; i < rangeTable.length; i++) {
+    const rangeDiff = Math.abs(range - rangeTable[i][0]);
+    if (rangeDiff < closestRangeDiff) {
+      closestRangeDiff = rangeDiff;
+      closestRange = rangeTable[i][0];
+      closestRangeIndex = i;
+    }
+  }
+
+  // Interpolate elevation from 2 closest ranges linearly
+  if (closestRangeIndex === rangeTable.length - 1) {
+    return rangeTable[closestRangeIndex][1];
+  }
+
+  const rangeDiff = range - closestRange;
+  const elevationDiff = rangeTable[closestRangeIndex + 1][1] - rangeTable[closestRangeIndex][1];
+  const elevation = rangeTable[closestRangeIndex][1] + (rangeDiff / (rangeTable[closestRangeIndex + 1][0] - closestRange)) * elevationDiff;
+  return elevation;
 }
 
 /**
@@ -364,7 +395,33 @@ export function getBearing(a, b) {
 export function getMortarSettings(mPos, tPos, mVel, dHeight = 0, useNatoMils = true) {
   const bearing = getBearing(mPos, tPos);
   const dist = getDist(mPos, tPos);
+  // For Post Scriptum this uses getElevation()
   const elevation = useNatoMils ? getNatoElevation(dist, dHeight, mVel) : getElevation(dist, dHeight, mVel);
+
+  return {
+    bearing,
+    elevation,
+    dist,
+    dHeight,
+  };
+}
+
+/**
+ * Calculates mortar settings for a mortar to hit a target.
+ *
+ * @param {LatLng} mPos - mortar position
+ * @param {LatLng} tPos - target position
+ * @param {number} mRangeTable - mortar range table
+ * @param {number} [dHeight] - height difference between mortar and target, defaults to 0
+ * @param {boolean} [useNatoMils] - use regular Milliradians or NATO Milliradians (Squad uses NATO mils)
+ * @returns {{bearing: number, elevation: (number|NaN), dist: number, dHeight: number}} - bearing and elevation settings
+ *  required to hit target. Elevation is NaN if target is out of range.
+ */
+export function getMortarSettingsFromTable(mPos, tPos, mRangeTable, dHeight = 0) {
+  const bearing = getBearing(mPos, tPos);
+  const dist = getDist(mPos, tPos);
+  // For Post Scriptum this uses getElevation()
+  const elevation = getElevationFromTable(dist, mRangeTable);
 
   return {
     bearing,
@@ -389,12 +446,7 @@ export function getSquadMortarTypes() {
  * @returns {MortarType[]} - list of mortar types
  */
 export function getPSMortarTypes() {
-  return [
-    new MortarType(PS_8CM_NAME, PS_8CM_VELOCITY, PS_8CM_MAX_DISTANCE),
-    new MortarType(PS_6CM_NAME, PS_6CM_VELOCITY, PS_6CM_MAX_DISTANCE),
-    new MortarType(PS_3INCH_NAME, PS_3INCH_VELOCITY, PS_3INCH_MAX_DISTANCE),
-    new MortarType(PS_4INCH_NAME, PS_4INCH_VELOCITY, PS_4INCH_MAX_DISTANCE),
-  ];
+  return PS_MORTAR_CONFIG;
 }
 
 export function pinToPSC(pinUrl) {

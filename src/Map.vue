@@ -557,8 +557,8 @@
       <!--MORTAR TYPE SELECTION-->
       <template v-if="postScriptum">
         <v-list
-          class="pa-0"
-          two-line>
+          class="px-0"
+          three-line>
           <v-list-tile>
             <v-list-tile-content>
               <v-list-tile-title>Set mortar type</v-list-tile-title>
@@ -566,13 +566,14 @@
                 <v-btn-toggle
                   v-model="mTypeIndex"
                   mandatory
-                  style="display: flex">
+                  style="display: flex; flex-wrap: wrap;">
                   <v-btn
                     flat
                     v-for="(mType, i) in mortarTypes"
                     :key="i"
                     style="flex: 1 0 0; border: none">{{ mType.name }}</v-btn>
-              </v-btn-toggle></v-list-tile-sub-title>
+                </v-btn-toggle>
+              </v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
@@ -1314,7 +1315,7 @@ export default {
           // no pin was found, so we create it
           pin = new MortarPin(
             this.map, pos, PinHolder.createIcon(this.colors.pin.mortar[urlIndex], this.pinSize),
-            true, this.mortarType.maxDistance,
+            true, this.mortarType.maxDistance, this.mortarType.minDistance,
           );
           this.placedMortars.push(pin);
           this.mortar = pin;
@@ -1514,7 +1515,14 @@ export default {
       const mVel = this.mortarType.velocity;
       const useNatoMils = !this.postScriptum;
 
-      return Utils.getMortarSettings(mPos, tPos, mVel, dHeight, useNatoMils);
+      if (mVel == null)
+      {
+        return Utils.getMortarSettingsFromTable(mPos, tPos, this.mortarType.rangeTable, dHeight);
+      }
+      else
+      {
+        return Utils.getMortarSettings(mPos, tPos, mVel, dHeight, useNatoMils);
+      }
     },
     setMortarSettings(settings, delayed = this.delayCalcUpdate) {
       if (delayed) {
@@ -1617,7 +1625,7 @@ export default {
       rTarget.hide();
     },
     formatDOMElevation(elevation) {
-      if (Number.isNaN(elevation) || elevation > 1580 || elevation < 800) {
+      if (Number.isNaN(elevation)) {
         return "XXXX.Xmil";
       }
       return `${Utils.pad((Math.round(elevation * 10) / 10).toFixed(1), 6)}mil`;
@@ -1764,11 +1772,16 @@ export default {
           console.log("subTargets:", this.subTargetsHolder.targets.length, this.subTargetsHolder.targets);
           console.log("currentSubTarget:", this.currentSubTarget);
           const cSubTargetPos = this.subTargetsHolder.targets[this.currentSubTarget].pos;
-          const settings = this.calcMortarSettings(this.mortar.pos, cSubTargetPos);
+          var settings = this.calcMortarSettings(this.mortar.pos, cSubTargetPos);
           this.setMortarSettings(settings, delayUpdate);
 
           const ele = settings.elevation;
-          const inRange = !Number.isNaN(ele) && ele <= 1580 && ele >= 800;
+          const inRange = !Number.isNaN(ele) && this.mortarType.maxDistance >= settings.dist && settings.dist >= this.mortarType.minDistance;
+          if (!inRange)
+          {
+            settings.elevation = NaN;
+          }
+
           this.drawSubTargetLine(this.mortar.pos, cSubTargetPos, inRange);
 
           if (this.targetType === TARGET_TYPE.LINE) {
@@ -1783,11 +1796,15 @@ export default {
           this.clearFireArea();
           this.clearSubTargetLine();
           this.subTargetsHolder.hideAll();
-          const settings = this.calcMortarSettings(this.mortar.pos, this.target.pos);
+          var settings = this.calcMortarSettings(this.mortar.pos, this.target.pos);
           this.setMortarSettings(settings, delayUpdate);
 
           const ele = settings.elevation;
-          const inRange = !Number.isNaN(ele) && ele <= 1580 && ele >= 800;
+          const inRange = !Number.isNaN(ele) && this.mortarType.maxDistance >= settings.dist && settings.dist >= this.mortarType.minDistance;
+          if (!inRange)
+          {
+            settings.elevation = NaN;
+          }
           this.drawPrimaryLine(this.mortar.pos, this.target.pos, inRange);
         }
       } else {
@@ -2083,6 +2100,7 @@ export default {
     mortarType(mType) {
       this.placedMortars.forEach((m) => {
         m.setMaxDistance(mType.maxDistance);
+        m.setMinDistance(mType.minDistance);
       });
     },
 
