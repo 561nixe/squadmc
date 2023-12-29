@@ -558,9 +558,9 @@
       <template v-if="postScriptum">
         <v-list
           class="px-0"
-          three-line>
+          three-line style="height: 150px; padding-top: 30px;">
           <v-list-tile>
-            <v-list-tile-content>
+            <v-list-tile-content style="height: 150px">
               <v-list-tile-title>Set mortar type</v-list-tile-title>
               <v-list-tile-sub-title>
                 <v-btn-toggle
